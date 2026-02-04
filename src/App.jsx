@@ -15,10 +15,6 @@ export default function App() {
     setCreatePoem(false) //Tanquem el formulari una vegada guardem el Poema
   };
 
-  
-  function handleClick(){
-
-  }
 
   return (
     <div className="main-container">
@@ -27,17 +23,21 @@ export default function App() {
 
         <FilterBar createPoem={()=> setCreatePoem(true)} />
 
-        <PoemForm onAdd={agregarPoema} onCanelar={()=> setCreatePoem(false)}/>
-        
         <main>
-          {createPoem ? (
-            <PoemForm onAdd={agregarPoema}/>
-          )}
-          
-          {poemas.length > 0 ? (
-            <PoemList items={poemas} />
-          ) : (
-            <EmptyState />
+        {/* 4. Renderizado Condicional: Si mostrarForm es true, enseñamos el formulario */}
+        {createPoem ? (
+          <PoemForm 
+            onAdd={agregarPoema} 
+            onCancelar={() => setCreatePoem(false)} 
+          />
+        ) : (
+          <>
+            {poemas.length > 0 ? (
+              <PoemList items={poemas} />
+            ) : (
+              <div className="empty">No hay poemas aún.</div>
+            )}
+          </>
         )}
         </main>
       </div>
