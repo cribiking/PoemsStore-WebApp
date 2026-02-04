@@ -17,6 +17,7 @@ export default function App() {
 
 
   return (
+
     <div className="main-container">
       <div className='content-container'>
         <Header count={poemas.length} />
@@ -24,21 +25,20 @@ export default function App() {
         <FilterBar createPoem={()=> setCreatePoem(true)} />
 
         <main>
-        {/* 4. Renderizado Condicional: Si mostrarForm es true, enseñamos el formulario */}
-        {createPoem ? (
-          <PoemForm 
-            onAdd={agregarPoema} 
-            onCancelar={() => setCreatePoem(false)} 
-          />
-        ) : (
-          <>
-            {poemas.length > 0 ? (
-              <PoemList items={poemas} />
-            ) : (
-              <div className="empty">No hay poemas aún.</div>
-            )}
-          </>
-        )}
+          {createPoem ? (
+            <PoemForm 
+              onAdd={agregarPoema} 
+              onCancelar={() => setCreatePoem(false)} 
+            />
+          ) : (
+            <>
+              {poemas.length > 0 ? (
+                <PoemList items={poemas} />
+              ) : (
+                <EmptyState/>
+              )}
+            </>
+          )}
         </main>
       </div>
     </div>

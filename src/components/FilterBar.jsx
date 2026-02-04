@@ -1,4 +1,4 @@
-import { PoemCard } from "./PoemCard";
+
 
 export function FilterBar({createPoem}){
 
