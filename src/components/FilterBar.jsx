@@ -1,13 +1,25 @@
-
+import { Button } from "@/components/ui/button"
+import {
+  ButtonGroup,
+  ButtonGroupSeparator,
+} from "@/components/ui/button-group"
 
 export function FilterBar({ goToDrafts, numSavedPoems, numDraftPoems, showAllPoems }) {
   return (
     <nav className="filter-bar">
-      <div className="container-btn">
-        <button onClick={showAllPoems}>Todos ({numSavedPoems + numDraftPoems})</button>
-        <button>Guardados ({numSavedPoems})</button>
-        <button onClick={goToDrafts} className="btn-borradores">Borradores ({numDraftPoems})</button>
-      </div>
+      <ButtonGroup>
+        <Button onClick={showAllPoems} variant="outline">
+          Todos ({numSavedPoems + numDraftPoems})
+        </Button>
+        <ButtonGroupSeparator />
+        <Button variant="outline">
+          Guardados ({numSavedPoems})
+        </Button>
+        <ButtonGroupSeparator />
+        <Button onClick={goToDrafts} variant="outline">
+          Borradores ({numDraftPoems})
+        </Button>
+      </ButtonGroup>
     </nav>
   );
 }

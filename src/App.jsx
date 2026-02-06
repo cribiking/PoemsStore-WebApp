@@ -128,6 +128,41 @@ export default function App() {
     navigate('/new');
   };
 
+  const exportPoemsToTxt = () => {
+    if (poemasGuardados.length === 0) {
+      alert('No tienes poemas guardados para exportar.');
+      return;
+    }
+
+    // Formatear poemas en texto
+    let content = '═══════════════════════════════════════════\n';
+    content += '           MIS POEMAS - COLECCIÓN\n';
+    content += '═══════════════════════════════════════════\n\n';
+    content += `Autor: ${user?.displayName || user?.email || 'Anónimo'}\n`;
+    content += `Fecha de exportación: ${new Date().toLocaleString('es-ES')}\n`;
+    content += `Total de poemas: ${poemasGuardados.length}\n\n`;
+    content += '═══════════════════════════════════════════\n\n';
+
+    poemasGuardados.forEach((poema, index) => {
+      content += `${index + 1}. ${poema.titulo}\n`;
+      content += `${'─'.repeat(poema.titulo.length + 3)}\n`;
+      content += `Fecha: ${poema.fecha || 'Sin fecha'}\n\n`;
+      content += `${poema.contenido}\n\n`;
+      content += '═══════════════════════════════════════════\n\n';
+    });
+
+    // Crear y descargar archivo
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `mis-poemas-${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   // Función para obtener solo poemas guardados
   const poemasGuardados = poemas.filter(p => p.estado === 'guardado');
 
@@ -162,6 +197,7 @@ export default function App() {
                   user={user}
                   onSignOut={handleSignOut}
                   onCreatePoem={handleCreatePoem}
+                  onExportPoems={exportPoemsToTxt}
                 />
 
                 <FilterBar 

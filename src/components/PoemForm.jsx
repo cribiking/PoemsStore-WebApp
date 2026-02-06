@@ -1,4 +1,10 @@
 // src/components/PoemForm.jsx
+import { Button } from "@/components/ui/button"
+import {
+  ButtonGroup,
+  ButtonGroupSeparator,
+} from "@/components/ui/button-group"
+
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -50,13 +56,34 @@ export function PoemForm({ onAdd, onUpdate, initialPoem, isEditing = false }) {
       <header className='poem-form-header'>
         <h2>Escriu el teu Poema</h2>
         <div className='header-btn'>
-          <button type='button' className='return-btn' onClick={() => navigate('/')} aria-label="Volver">← Tornar</button>
+          <Button variant="ghost" onClick={() => navigate('/')}>← Tornar</Button>
         </div>
-         <div className='header-actions'>
-            <button type="submit" form="poem-form" className='save-btn' disabled={isSaving}>Guardar Poema</button>
-            <button type="button" onClick={() => crearPoema('borrador')} className='draft-btn' disabled={isSaving}>Drafts</button>
-            <button type="button" onClick={() => navigate('/')} className='cancel-btn'>Cancel</button>
-          </div>
+        <div className='header-actions'>
+          <ButtonGroup>
+            <Button 
+              type="submit" 
+              form="poem-form" 
+              disabled={isSaving}
+            >
+              Save Poem
+            </Button>
+            <ButtonGroupSeparator />
+            <Button 
+              variant="outline"
+              onClick={() => crearPoema('borrador')} 
+              disabled={isSaving}
+            >
+              Drafts
+            </Button>
+            <ButtonGroupSeparator />
+            <Button 
+              variant="outline"
+              onClick={() => navigate('/')}
+            >
+              Cancel
+            </Button>
+          </ButtonGroup>
+        </div>
       </header>
 
       <div className='poem-form-body'>
