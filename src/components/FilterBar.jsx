@@ -1,15 +1,13 @@
 
 
-export function FilterBar({createPoem}){
-
-   return (
+export function FilterBar({ goToDrafts, numSavedPoems, numDraftPoems, showAllPoems }) {
+  return (
     <nav className="filter-bar">
       <div className="container-btn">
-        <button>Todos (0)</button>
-        <button>Guardados (0)</button>
-        <button>Borradores (0)</button>
+        <button onClick={showAllPoems}>Todos ({numSavedPoems + numDraftPoems})</button>
+        <button>Guardados ({numSavedPoems})</button>
+        <button onClick={goToDrafts} className="btn-borradores">Borradores ({numDraftPoems})</button>
       </div>
-        <button onClick={createPoem} className="btn-new"> + Nuevo Poema</button>
     </nav>
   );
 }

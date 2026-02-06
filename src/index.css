@@ -1,11 +1,11 @@
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
-  font-weight: 400;
+  font-weight: 300;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color-scheme: light;
+  color: #1a1a1a;
+  background-color: #FFD6E8;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -14,9 +14,11 @@
 
   /*Centrar el div pare al centr de la pantalla*/
   display: grid;
-  place-items: center;    /* Hace todo el trabajo por ti */
   height: 100vh;
-}
+  width: 100%;
+  
+  
+  }
 
 a {
   font-weight: 500;
@@ -29,6 +31,7 @@ a:hover {
 
 body {
   margin: 0;
+  padding: 0;
 }
 
 h1 {
@@ -39,11 +42,12 @@ h1 {
 button {
   border-radius: 8px;
   border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
+  padding: 0.5em 0.9em;
+  font-size: 0.9em;
   font-weight: 500;
   font-family: inherit;
   background-color: #1a1a1a;
+  color: white;
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -71,24 +75,104 @@ button:focus-visible {
 
 
 .main-container {
+  width: 100%; /*Ocupa tota la pantalla horitzontal*/
+  min-height: 100vh; /*Ocupa tota la pantalla vertical*/
+  padding: clamp(12px, 3vw, 32px);
+  box-sizing: border-box;
+
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-content: center;
 }
 
 .content-container{
+  width: 100%;
+  height: 70vh;
+  margin: auto;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center; 
-  height: 100%;
+  gap: 8px;
 }
 
 .header-container{
   display: flex;
-  flex-direction: column;
-  align-content: center;
   align-items: center;
+  justify-content: space-between;
   width: 100%;
+  gap: 20px;
+  padding: 12px 24px;
+  box-sizing: border-box;
+  background: linear-gradient(135deg, #E91E63 0%, #C2185B 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.header-fixed{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+}
+
+.header-left{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.header-title{
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.header-count{
+  margin: 0;
+  color: #b7b7b7;
+  font-size: 0.95rem;
+}
+
+.header-user-actions{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-new-btn{
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid #4a4a4a;
+  background: #252525;
+  color: #fff;
+  font-size: 1.5rem;
+  line-height: 1;
+  padding: 0;
+}
+
+.header-avatar-btn{
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid #4a4a4a;
+  background: #1f1f1f;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.header-avatar-img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.header-avatar-fallback{
+  color: #fff;
+  font-weight: 600;
 }
 
 .empty-container {
@@ -100,13 +184,678 @@ button:focus-visible {
   height: 100%;
 }
 
-.filter-bar{
+.filter-bar {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  padding: 8px 0;
 }
 
-.container-btn{
-  flex-direction: row;
+.container-btn {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(6px, 2vw, 10px);
   
 }
 
+.container-btn button {
+  padding: clamp(0.4em, 1vw, 0.55em) clamp(0.7em, 2vw, 1em);
+  font-size: clamp(0.8em, 1.5vw, 0.95em);
+  white-space: nowrap;
+  color: white;
+}
+
+
+/*################  ESTIL DE POEM-CARD  ####################*/
+
+.poem-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.poem-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.poem-group-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 2px solid #E91E63;
+}
+
+.poem-group-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #C2185B;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.poem-card{
+  border-radius: 12px;
+  border: 2px solid #333;
+  background: #0a0a0a;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.poem-card-clickable {
+  cursor: pointer;
+}
+
+.poem-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.8);
+  border-color: #E91E63;
+}
+
+.poem-card-content {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.poem-card h3 {
+  margin: 0;
+  font-size: 1.05em;
+  color: #fff;
+}
+
+.poem-card p {
+  margin: 0;
+  color: #ccc;
+  font-size: 0.9em;
+  line-height: 1.35;
+  max-height: 52px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.poem-card span {
+  font-size: 0.8em;
+  color: #999;
+  margin-top: 2px;
+}
+
+.poem-card-actions {
+  display: flex;
+  gap: 8px;
+  padding: 0 20px 18px;
+}
+
+.poem-card-btn {
+  border-radius: 999px;
+  border: 1px solid #555;
+  background: #1f1f1f;
+  color: #ddd;
+  font-size: 0.85em;
+  padding: 6px 12px;
+}
+
+.poem-card-btn:hover {
+  border-color: #888;
+}
+
+.poem-card-delete {
+  border-color: #7a3b3b;
+  color: #f0b5b5;
+}
+
+.poem-editor-actions {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.poem-editor-delete {
+  border-radius: 999px;
+  border: 1px solid #7a3b3b;
+  background: #2a1b1b;
+  color: white;
+  padding: 8px 16px;
+  font-size: 0.9em;
+}
+
+.poem-editor-delete:hover {
+  border-color: #a05555;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 16px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.modal-card {
+  width: min(420px, 100%);
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-card h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #fff;
+}
+
+.modal-card p {
+  margin: 0;
+  color: #cfcfcf;
+  font-size: 0.95rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.modal-btn {
+  border-radius: 999px;
+  border: 1px solid #444;
+  background: #252525;
+  color: white;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+}
+
+.modal-danger {
+  border-color: #7a3b3b;
+  background: #2a1b1b;
+  color: white;
+}
+
+.modal-danger:hover {
+  border-color: #a05555;
+}
+
+.poem-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+
+/*################  ESTIL DE POEM-FORM ####################*/
+
+.poem-form-screen{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.poem-form-header{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 20px 16px;
+  gap: 20px;
+}
+
+.poem-form-header h2{
+  margin: 0 0 20px 0;
+  font-weight: bold;
+  text-align: center;
+  
+}
+
+.header-btn{
+  display: flex;
+  align-items: center;
+  width: 100%; 
+}
+
+.return-btn {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.return-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+}
+
+.header-actions{
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.save-btn,
+.draft-btn,
+.cancel-btn{
+  font-size: 0.9em;
+  color: white;
+}
+.header-actions {
+  gap: 12px;
+}
+
+.poem-form-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: auto;
+  padding: 30px 16px;
+  box-sizing: border-box;
+}
+
+.poem-form-container {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  justify-content: center;
+}
+
+.poem-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.title-text-container {
+  width: 100%;
+}
+
+.input-text-container {
+  width: 100%;
+  
+}
+
+.input {
+  background-color: white;
+}
+
+.poem-form-body input {
+  width: 100%;
+  font-size: 2rem;
+  padding: 15px 0;
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid #555;
+  color: white;
+  outline: none;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* Estilo para el área de texto (el poema) */
+.poem-form-body textarea {
+  width: 100%;
+  min-height: 300px;
+  font-size: 1.2rem;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid #444;
+  border-radius: 15px;
+  color: #ccc;
+  outline: none;
+  resize: vertical;
+  line-height: 1.6;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+/*################  LOGIN  ####################*/
+
+.login-container {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    radial-gradient(circle at top left, rgba(80, 80, 80, 0.2), transparent 45%),
+    radial-gradient(circle at bottom right, rgba(120, 120, 120, 0.2), transparent 50%),
+    #1c1c1c;
+}
+
+.login-card {
+  width: min(420px, 100%);
+  background: rgba(24, 24, 24, 0.95);
+  border: 1px solid #2f2f2f;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.login-mark {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #2a2a2a;
+  border: 1px solid #3a3a3a;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.login-card h1 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.login-subtitle {
+  margin: 0;
+  color: #c9c9c9;
+  font-size: 0.98rem;
+}
+
+.login-error {
+  margin: 0;
+  color: #f0b5b5;
+  background: rgba(122, 59, 59, 0.2);
+  border: 1px solid #7a3b3b;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+}
+
+.login-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 999px;
+  border: 1px solid #3b3b3b;
+  background: #202020;
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+.login-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.login-btn-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #2f2f2f;
+  border: 1px solid #3b3b3b;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+
+
+/*Drafts*/
+
+.draft-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+}
+
+/* DraftsPage Styles */
+.borradores-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 20px;
+  padding: 12px 24px;
+  box-sizing: border-box;
+  background: linear-gradient(135deg, #E91E63 0%, #C2185B 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.drafts-main {
+  padding-top: 100px;
+}
+
+/* Export Menu Styles */
+.poem-editor-export {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.poem-editor-export:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+}
+
+.poem-editor-delete {
+  padding: 8px 16px;
+  background: #d32f2f;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(211, 47, 47, 0.4);
+}
+
+.poem-editor-delete:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(211, 47, 47, 0.5);
+}
+
+.poem-editor-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.export-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.export-modal-card {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+}
+
+.export-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.export-menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 12px;
+}
+
+.export-menu-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.export-close-btn {
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.export-close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.export-menu-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.export-button {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 8px;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.export-button:hover:not(:disabled) {
+  background: #333;
+  border-color: #667eea;
+  transform: translateX(4px);
+}
+
+.export-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.export-icon {
+  font-size: 1.3rem;
+}
+
+.pdf-button {
+  border-color: #667eea;
+}
+
+.pdf-button:hover:not(:disabled) {
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.txt-button {
+  border-color: #ff9800;
+}
+
+.txt-button:hover:not(:disabled) {
+  background: rgba(255, 152, 0, 0.1);
+}
+
+.drive-button {
+  border-color: #4285f4;
+}
+
+.drive-button:hover:not(:disabled) {
+  background: rgba(66, 133, 244, 0.1);
+}
+
+.export-message {
+  padding: 12px 16px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.export-message.loading {
+  background: rgba(102, 126, 234, 0.2);
+  color: #667eea;
+}
+
+.export-message.success {
+  background: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+}
+
+.export-message.error {
+  background: rgba(211, 47, 47, 0.2);
+  color: #d32f2f;
+}

@@ -1,47 +1,214 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
+import { addDoc, collection, deleteDoc, doc, onSnapshot, orderBy, query, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
+import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
+
+import { auth, db, googleProvider } from './firebase';
 import { PoemList } from './components/PoemList';
 import { Header } from './components/Header';
 import { FilterBar } from './components/FilterBar';
 import { EmptyState } from './components/EmptyState';
 import { PoemForm } from './components/PoemForm';
+import { DraftsPage } from './components/DraftsPage';
+import { LoginForm } from './components/LoginForm';
+import { PoemEditor } from './components/PoemEditor';
 
 export default function App() {
+  //Variable on guardem els poemas de moment
   const [poemas, setPoemas] = useState([]);
-  const [createPoem , setCreatePoem] = useState(false);
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [poemsLoading, setPoemsLoading] = useState(false);
+  const [signInLoading, setSignInLoading] = useState(false);
+  const [authError, setAuthError] = useState('');
+  const navigate = useNavigate();
 
-  // Paso 3: Función para añadir un poema nuevo
-  const agregarPoema = (nuevoPoema) => {
-    setPoemas([...poemas, nuevoPoema]); // Copiamos los viejos y añadimos el nuevo
-    setCreatePoem(false) //Tanquem el formulari una vegada guardem el Poema
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setAuthLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (!user) {
+      setPoemas([]);
+      setPoemsLoading(false);
+      return;
+    }
+
+    setPoemsLoading(true);
+    const poemsRef = collection(db, 'users', user.uid, 'poems');
+    const poemsQuery = query(poemsRef, orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(
+      poemsQuery,
+      (snapshot) => {
+        const data = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setPoemas(data);
+        setPoemsLoading(false);
+      },
+      () => {
+        setAuthError('No se pudo cargar los poemas.');
+        setPoemsLoading(false);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [user]);
+
+  const handleSignIn = async () => {
+    setAuthError('');
+    setSignInLoading(true);
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      setUser(result.user);
+      setAuthLoading(false);
+      
+      // Guardar info del usuario en Firestore
+      const userRef = doc(db, 'users', result.user.uid);
+      await setDoc(userRef, {
+        email: result.user.email,
+        displayName: result.user.displayName || result.user.email.split('@')[0],
+        photoURL: result.user.photoURL || null,
+        createdAt: serverTimestamp()
+      }, { merge: true }); // merge: true para no sobrescribir si ya existe
+    } catch {
+      setAuthError('No se pudo iniciar sesion con Google.');
+    } finally {
+      setSignInLoading(false);
+    }
   };
 
+  const handleSignOut = async () => {
+    setAuthError('');
+    try {
+      await signOut(auth);
+      setUser(null);
+    } catch {
+      setAuthError('No se pudo cerrar la sesion.');
+    }
+  };
+
+  // Paso 3: Función para añadir un poema nuevo
+  const agregarPoema = async (nuevoPoema) => {
+    if (!user) return;
+    const poemsRef = collection(db, 'users', user.uid, 'poems');
+    await addDoc(poemsRef, {
+      ...nuevoPoema,
+      createdAt: serverTimestamp()
+    });
+  };
+
+  const actualizarPoema = async (poemId, nuevoPoema) => {
+    if (!user || !poemId) return;
+    const poemRef = doc(db, 'users', user.uid, 'poems', poemId);
+    await updateDoc(poemRef, {
+      ...nuevoPoema,
+      fecha: new Date().toLocaleDateString(),
+      updatedAt: serverTimestamp()
+    });
+  };
+
+  const eliminarPoema = async (poemId) => {
+    if (!user || !poemId) return;
+    const poemRef = doc(db, 'users', user.uid, 'poems', poemId);
+    await deleteDoc(poemRef);
+  };
+
+  const handleEditPoem = (poemId) => {
+    navigate(`/edit/${poemId}`);
+  };
+
+  const handleCreatePoem = () => {
+    navigate('/new');
+  };
+
+  // Función para obtener solo poemas guardados
+  const poemasGuardados = poemas.filter(p => p.estado === 'guardado');
+
+  // Función para obtener solo borradores
+  const borradores = poemas.filter(p => p.estado === 'borrador');
+
+
+  if (authLoading) {
+    return (
+      <div className="main-container">
+        <div className="content-container">
+          <p>Cargando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <LoginForm onSignIn={handleSignIn} loading={signInLoading} error={authError} />;
+  }
 
   return (
+    <>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <div className="main-container">
+              <div className='content-container'>
+                <Header
+                  count={poemasGuardados.length + borradores.length}
+                  user={user}
+                  onSignOut={handleSignOut}
+                  onCreatePoem={handleCreatePoem}
+                />
 
-    <div className="main-container">
-      <div className='content-container'>
-        <Header count={poemas.length} />
+                <FilterBar 
+                  goToDrafts={()=> navigate('/drafts')} 
+                  numSavedPoems={poemasGuardados.length}
+                  numDraftPoems={borradores.length}
+                  />
 
-        <FilterBar createPoem={()=> setCreatePoem(true)} />
-
-        <main>
-          {createPoem ? (
-            <PoemForm 
-              onAdd={agregarPoema} 
-              onCancelar={() => setCreatePoem(false)} 
-            />
-          ) : (
-            <>
-              {poemas.length > 0 ? (
-                <PoemList items={poemas} />
-              ) : (
-                <EmptyState/>
-              )}
-            </>
-          )}
-        </main>
-      </div>
-    </div>
+                <main>
+                  {poemsLoading ? (
+                    <p>Cargando poemas...</p>
+                  ) : poemasGuardados.length > 0 ? (
+                    <PoemList items={poemasGuardados} onEdit={handleEditPoem} />
+                  ) : (
+                    <EmptyState/>
+                  )}
+                </main>
+              </div>
+            </div>
+          }
+        />
+        <Route
+          path="/new"
+          element={
+            <div className="poem-form-screen">
+              <PoemForm onAdd={agregarPoema} />
+            </div>
+          }
+          
+        />
+        <Route
+          path="/drafts"
+          element={
+            <div className='drafts-page-screen'>
+              <DraftsPage borradores={borradores} onEdit={handleEditPoem} />
+            </div>
+          }
+        />
+        <Route
+          path="/edit/:poemId"
+          element={
+            <PoemEditor poems={poemas} onUpdate={actualizarPoema} onDelete={eliminarPoema} loading={poemsLoading} user={user} />
+          }
+        />
+        
+      </Routes>
+    </>
   );
 }
 

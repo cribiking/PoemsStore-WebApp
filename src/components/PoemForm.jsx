@@ -1,44 +1,85 @@
 // src/components/PoemForm.jsx
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-export function PoemForm({ onAdd , onCanelar}) {
-  const [titulo, setTitulo] = useState('');
-  const [texto, setTexto] = useState('');
+export function PoemForm({ onAdd, onUpdate, initialPoem, isEditing = false }) {
+  const [titulo, setTitulo] = useState(initialPoem?.titulo ?? '');
+  const [texto, setTexto] = useState(initialPoem?.contenido ?? '');
+  const [isSaving, setIsSaving] = useState(false);
+  const navigate = useNavigate();
 
-  const createNewPoemForm = (e) => {
-    e.preventDefault(); // Evita que la página se recargue
-    if (!titulo || !texto) return; // No añadir si está vacío
+  useEffect(() => {
+    if (!initialPoem) return;
+    setTitulo(initialPoem.titulo ?? '');
+    setTexto(initialPoem.contenido ?? '');
+  }, [initialPoem]);
+
+  const crearPoema = async (estado) => {
+    if (!titulo || !texto || isSaving) return; // No añadir si está vacío
 
     // Creamos el objeto del nuevo poema
     const nuevoPoema = {
-      id: Date.now(), // Un ID único simple
       titulo: titulo,
       contenido: texto,
-      fecha: new Date().toLocaleDateString()
+      fecha: new Date().toLocaleDateString(),
+      estado: estado // 'guardado' o 'borrador'
     };
+    setIsSaving(true);
 
-    onAdd(nuevoPoema); // Enviamos el poema a App.jsx
-    setTitulo(''); // Limpiamos el formulario
-    setTexto('');
+    try {
+      if (isEditing) {
+        await onUpdate?.(initialPoem?.id, nuevoPoema);
+      } else {
+        await onAdd?.(nuevoPoema); // Enviamos el poema a App.jsx
+      }
+      navigate('/');
+      setTitulo(''); // Limpiamos el formulario
+      setTexto('');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const createNewPoemForm = (e) => {
+    e.preventDefault(); // Evita que la página se recargue
+    crearPoema('guardado'); // Guardar como guardado
   };
 
   return (
-    <div className='poem-form-container'>
-      <form onSubmit={createNewPoemForm} className="poem-form">
-        <input 
-          type="text" 
-          placeholder="Título del poema..." 
-          value={titulo}
-          onChange={(e) => setTitulo(e.target.value)}
-        />
-        <textarea 
-          placeholder="Escribe aquí tus versos..." 
-          value={texto}
-          onChange={(e) => setTexto(e.target.value)}
-        />
-        <button type="submit">Guardar Poema</button>
-        <button type="button" onClick={onCanelar}>Guardar en Borradores</button>
-      </form>
-    </div>
+    <>
+      <header className='poem-form-header'>
+        <h2>Escriu el teu Poema</h2>
+        <div className='header-btn'>
+          <button type='button' className='return-btn' onClick={() => navigate('/')} aria-label="Volver">← Tornar</button>
+        </div>
+         <div className='header-actions'>
+            <button type="submit" form="poem-form" className='save-btn' disabled={isSaving}>Guardar Poema</button>
+            <button type="button" onClick={() => crearPoema('borrador')} className='draft-btn' disabled={isSaving}>Drafts</button>
+            <button type="button" onClick={() => navigate('/')} className='cancel-btn'>Cancel</button>
+          </div>
+      </header>
+
+      <div className='poem-form-body'>
+        <div className='poem-form-container'>
+          <form id="poem-form" onSubmit={createNewPoemForm} className="poem-form">
+            <div className='title-text-container'>
+              <input 
+                type="text" 
+                placeholder="Título del poema..." 
+                value={titulo}
+                onChange={(e) => setTitulo(e.target.value)}
+              />
+            </div>
+            <div className='input-text-container'>
+              <textarea className='input'
+                placeholder="Escribe aquí tus versos..." 
+                value={texto}
+                onChange={(e) => setTexto(e.target.value)}
+              />
+            </div>
+          </form>
+        </div>
+      </div>
+    </>
   );
 }
