@@ -142,23 +142,28 @@ button:focus-visible {
 }
 
 .main-container {
-  width: 100%; /*Ocupa tota la pantalla horitzontal*/
-  min-height: 100vh; /*Ocupa tota la pantalla vertical*/
-  padding: clamp(12px, 3vw, 32px);
-  box-sizing: border-box;
-
+  width: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-content: center;
+  box-sizing: border-box;
 }
 
 .content-container{
+  flex: 1;
   width: 100%;
-  height: 70vh;
-  margin: auto;
+  padding: 40px clamp(12px, 3vw, 32px);
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+.poems-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .header-container{
@@ -166,7 +171,7 @@ button:focus-visible {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  gap: 20px;
+  gap: 12px;
   padding: 12px 24px;
   box-sizing: border-box;
   background: linear-gradient(135deg, #E91E63 0%, #C2185B 100%);
@@ -176,10 +181,10 @@ button:focus-visible {
 }
 
 .header-fixed{
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  position: static;
+  top: auto;
+  left: auto;
+  right: auto;
   z-index: 20;
 }
 
@@ -187,6 +192,8 @@ button:focus-visible {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  flex: 0 1 300px;
+  min-width: 0;
 }
 
 .header-title{
@@ -198,13 +205,34 @@ button:focus-visible {
   margin: 0;
   color: #b7b7b7;
   font-size: 0.95rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
+/* Button Group Styles */
+.gap-button-group-left {
+  border-radius: 6px 0 0 6px !important;
+  border-right: none !important;
+}
+
+.gap-button-group-right {
+  border-radius: 0 6px 6px 0 !important;
+  border-left: none !important;
+}
+
+.header-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
 
 .header-user-actions{
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-shrink: 0;
 }
 
 .header-new-btn{
@@ -606,11 +634,17 @@ button:focus-visible {
   gap: 20px;
 }
 
+.poem-form-header h1,
 .poem-form-header h2{
   margin: 0 0 20px 0;
-  font-weight: bold;
+  font-weight: 700;
   text-align: center;
-
+  font-size: 2.5rem;
+  background: linear-gradient(135deg, #E91E63 0%, #9C27B0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
 }
 
 .header-btn{
@@ -1307,6 +1341,21 @@ button:focus-visible {
 }
 
 /*---break---*/
+
+/* Footer Styles */
+.footer-container {
+  margin-top: auto;
+  padding-top: 5px;
+  border-top: 2px solid rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-size: 0.85rem;
+  color: #999;
+}
+
+.footer-container p {
+  margin:0px;
+  line-height: 1.5;
+}
 
 @layer base {
   * {

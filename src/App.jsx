@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { addDoc, collection, deleteDoc, doc, onSnapshot, orderBy, query, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
 import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
@@ -8,10 +8,12 @@ import { PoemList } from './components/PoemList';
 import { Header } from './components/Header';
 import { FilterBar } from './components/FilterBar';
 import { EmptyState } from './components/EmptyState';
-import { PoemForm } from './components/PoemForm';
 import { LoginForm } from './components/LoginForm';
-import { PoemEditor } from './components/PoemEditor';
-import { Gallery } from './components/Gallery';
+
+// Lazy load components that aren't needed immediately
+const PoemForm = lazy(() => import('./components/PoemForm').then(m => ({ default: m.PoemForm })));
+const PoemEditor = lazy(() => import('./components/PoemEditor').then(m => ({ default: m.PoemEditor })));
+const Gallery = lazy(() => import('./components/Gallery').then(m => ({ default: m.Gallery })));
 
 export default function App() {
   //Variable on guardem els poemas de moment
@@ -187,29 +189,30 @@ export default function App() {
 
   return (
     <>
-      <Routes>
+      <Suspense fallback={<div className="main-container"><div className="content-container"><p>Loading...</p></div></div>}>
+        <Routes>
         <Route
           path="/"
           element={
             <div className="main-container">
-              <div className='content-container'>
-                <Header
-                  count={poemasGuardados.length + borradores.length}
-                  user={user}
-                  onSignOut={handleSignOut}
-                  onCreatePoem={handleCreatePoem}
-                  onExportPoems={exportPoemsToTxt}
-                />
+              <Header
+                count={poemasGuardados.length + borradores.length}
+                user={user}
+                onSignOut={handleSignOut}
+                onCreatePoem={handleCreatePoem}
+                onExportPoems={exportPoemsToTxt}
+              />
 
-                <FilterBar 
-                  activeView={activeView}
-                  onViewChange={setActiveView}
-                  goToGallery={() => navigate("/gallery")}
-                  numSavedPoems={poemasGuardados.length}
-                  numDraftPoems={borradores.length}
+              <main className='content-container'>
+                <div className='poems-section'>
+                  <FilterBar 
+                    activeView={activeView}
+                    onViewChange={setActiveView}
+                    goToGallery={() => navigate("/gallery")}
+                    numSavedPoems={poemasGuardados.length}
+                    numDraftPoems={borradores.length}
                   />
 
-                <main>
                   {poemsLoading ? (
                     <p>Cargando poemas...</p>
                   ) : activeView === 'saved' ? (
@@ -225,8 +228,13 @@ export default function App() {
                       <EmptyState/>
                     )
                   )}
-                </main>
-              </div>
+                </div>
+              </main>
+
+              <footer className='footer-container'>
+                <p> Dedicated to Ariadna I. created by Arnau C.</p>
+                <p>My sweet Love</p>
+              </footer>
             </div>
           }
         />
@@ -251,8 +259,8 @@ export default function App() {
             <Gallery/>
           }
         />
-        
-      </Routes>
+        </Routes>
+      </Suspense>
     </>
   );
 }

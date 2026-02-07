@@ -13,7 +13,17 @@ export function PoemForm({ onAdd, onUpdate, initialPoem, isEditing = false }) {
   const [titulo, setTitulo] = useState(initialPoem?.titulo ?? '');
   const [texto, setTexto] = useState(initialPoem?.contenido ?? '');
   const [isSaving, setIsSaving] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(null); // 'cancel' o 'delete'
   const navigate = useNavigate();
+
+  const hasChanges = () => {
+    if (isEditing) {
+      return titulo !== (initialPoem?.titulo ?? '') || 
+             texto !== (initialPoem?.contenido ?? '');
+    }
+    return titulo.trim() !== '' || texto.trim() !== '';
+  };
 
   useEffect(() => {
     if (!initialPoem) return;
@@ -22,14 +32,13 @@ export function PoemForm({ onAdd, onUpdate, initialPoem, isEditing = false }) {
   }, [initialPoem]);
 
   const crearPoema = async (estado) => {
-    if (!titulo || !texto || isSaving) return; // No añadir si está vacío
+    if (!titulo || !texto || isSaving) return;
 
-    // Creamos el objeto del nuevo poema
     const nuevoPoema = {
       titulo: titulo,
       contenido: texto,
       fecha: new Date().toLocaleDateString(),
-      estado: estado // 'guardado' o 'borrador'
+      estado: estado
     };
     setIsSaving(true);
 
@@ -37,13 +46,29 @@ export function PoemForm({ onAdd, onUpdate, initialPoem, isEditing = false }) {
       if (isEditing) {
         await onUpdate?.(initialPoem?.id, nuevoPoema);
       } else {
-        await onAdd?.(nuevoPoema); // Enviamos el poema a App.jsx
+        await onAdd?.(nuevoPoema);
       }
       navigate('/');
-      setTitulo(''); // Limpiamos el formulario
+      setTitulo('');
       setTexto('');
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleCancelClick = () => {
+    if (hasChanges()) {
+      setConfirmAction('cancel');
+      setShowConfirm(true);
+    } else {
+      navigate('/');
+    }
+  };
+
+  const handleConfirmCancel = () => {
+    if (confirmAction === 'cancel') {
+      // Auto-guardar a Drafts
+      crearPoema('borrador');
     }
   };
 
@@ -55,9 +80,9 @@ export function PoemForm({ onAdd, onUpdate, initialPoem, isEditing = false }) {
   return (
     <>
       <header className='poem-form-header'>
-        <h2>Write Your Poem</h2>
+        <h1>{isEditing ? 'Edit Poem' : 'Create Poem'}</h1>
         <div className='header-btn'>
-          <Button variant="ghost" onClick={() => navigate('/')}>← Tornar</Button>
+          <Button variant="ghost" onClick={handleCancelClick}>← Back</Button>
         </div>
       </header>
 
@@ -81,7 +106,7 @@ export function PoemForm({ onAdd, onUpdate, initialPoem, isEditing = false }) {
           <ButtonGroupSeparator />
           <Button 
             variant="outline"
-            onClick={() => navigate('/')}
+            onClick={handleCancelClick}
           >
             Cancel
           </Button>
@@ -93,7 +118,7 @@ export function PoemForm({ onAdd, onUpdate, initialPoem, isEditing = false }) {
             <div className='title-text-container'>
               <input 
                 type="text" 
-                placeholder="Título del poema..." 
+                placeholder="Write a title..." 
                 value={titulo}
                 onChange={(e) => setTitulo(e.target.value)}
               />
@@ -101,7 +126,7 @@ export function PoemForm({ onAdd, onUpdate, initialPoem, isEditing = false }) {
             <div className='input-text-container'>
               <textarea 
                 className='input'
-                placeholder="Escribe aquí tus versos..." 
+                placeholder="Let your mind be free..." 
                 value={texto}
                 onChange={(e) => setTexto(e.target.value)}
               />
@@ -109,6 +134,33 @@ export function PoemForm({ onAdd, onUpdate, initialPoem, isEditing = false }) {
           </form>
         </div>
       </div>
+
+      {showConfirm ? (
+        <div className="modal-overlay" role="dialog" aria-modal="true">
+          <div className="modal-card">
+            <h3>{confirmAction === 'cancel' ? 'Unsaved changes' : 'Delete poem'}</h3>
+            <p>
+              {confirmAction === 'cancel' 
+                ? 'Do you want to save the changes to Drafts before leaving?' 
+                : 'This poem will be deleted. Are you sure?'}
+            </p>
+            <div className="modal-actions">
+              <button type="button" className="modal-btn" onClick={() => {
+                setShowConfirm(false);
+                navigate('/');
+              }}>
+                {confirmAction === 'cancel' ? "Don't save" : 'Cancel'}
+              </button>
+              <button type="button" className="modal-btn modal-danger" onClick={() => {
+                setShowConfirm(false);
+                handleConfirmCancel();
+              }}>
+                {confirmAction === 'cancel' ? 'Save to Drafts' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </>
   );
 }

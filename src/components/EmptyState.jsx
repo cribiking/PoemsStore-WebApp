@@ -2,8 +2,8 @@
 export function EmptyState() {
   return (
     <div className="empty-container">
-      <h3>No tienes poemas aún</h3>
-      <p>Comienza creando tu primer poema</p>
+      <h2>Start Creating your first Poem</h2>
+      <p>Created by Arnau C. dedicated to Ariadna I.</p>
     </div>
   );
 }

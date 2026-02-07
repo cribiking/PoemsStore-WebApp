@@ -9,6 +9,7 @@ export function PoemEditor({ poems, onUpdate, onDelete, loading, user }) {
   const poem = poems.find((item) => item.id === poemId);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showExportMenu, setShowExportMenu] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(null); // 'delete' o 'cancel'
 
   const handleDelete = async () => {
     if (!onDelete) return;
@@ -16,7 +17,8 @@ export function PoemEditor({ poems, onUpdate, onDelete, loading, user }) {
     navigate('/');
   };
 
-  const handleOpenConfirm = () => {
+  const handleOpenConfirm = (action) => {
+    setConfirmAction(action);
     setShowConfirm(true);
   };
 
@@ -27,7 +29,7 @@ export function PoemEditor({ poems, onUpdate, onDelete, loading, user }) {
   if (loading) {
     return (
       <div className="poem-form-screen">
-        <p>Cargando poema...</p>
+        <p>Loading Poem...</p>
       </div>
     );
   }
@@ -35,7 +37,7 @@ export function PoemEditor({ poems, onUpdate, onDelete, loading, user }) {
   if (!poem) {
     return (
       <div className="poem-form-screen">
-        <p>No se encontro el poema.</p>
+        <p>Poem not found.</p>
         <button type="button" onClick={() => navigate('/')}>Volver</button>
       </div>
     );
@@ -46,10 +48,10 @@ export function PoemEditor({ poems, onUpdate, onDelete, loading, user }) {
       <PoemForm onUpdate={onUpdate} initialPoem={poem} isEditing />
       <div className="poem-editor-actions">
         <button type="button" className="poem-editor-export" onClick={() => setShowExportMenu(true)}>
-          📤 Exportar
+          📤 Export Poem
         </button>
-        <button type="button" className="poem-editor-delete" onClick={handleOpenConfirm}>
-          Eliminar poema
+        <button type="button" className="poem-editor-delete" onClick={() => handleOpenConfirm('delete')}>
+          Delete Poem
         </button>
       </div>
       {showExportMenu && (
@@ -66,14 +68,23 @@ export function PoemEditor({ poems, onUpdate, onDelete, loading, user }) {
       {showConfirm ? (
         <div className="modal-overlay" role="dialog" aria-modal="true">
           <div className="modal-card">
-            <h3>Eliminar poema</h3>
-            <p>Esta accion no se puede deshacer. Deseas continuar?</p>
+            <h3>{confirmAction === 'delete' ? 'Delete poem' : 'Unsaved changes'}</h3>
+            <p>
+              {confirmAction === 'delete' 
+                ? 'This action cannot be undone. Do you want to proceed?' 
+                : 'Do you want to save the changes to Drafts before leaving?'}
+            </p>
             <div className="modal-actions">
               <button type="button" className="modal-btn" onClick={handleCloseConfirm}>
-                Cancelar
+                {confirmAction === 'delete' ? 'Cancel' : "Don't save"}
               </button>
-              <button type="button" className="modal-btn modal-danger" onClick={handleDelete}>
-                Eliminar
+              <button type="button" className="modal-btn modal-danger" onClick={() => {
+                handleCloseConfirm();
+                if (confirmAction === 'delete') {
+                  handleDelete();
+                }
+              }}>
+                {confirmAction === 'delete' ? 'Delete' : 'Save to Drafts'}
               </button>
             </div>
           </div>
