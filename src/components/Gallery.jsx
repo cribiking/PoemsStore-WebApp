@@ -50,9 +50,9 @@ export function Gallery(){
         </header>
 
         <div className="img-display-container flex flex-col items-center justify-center">
-            <div className="flex items-center justify-center w-full pt-20">
+            <div className="flex items-center justify-center w-full pt-20 pb-4">
                 <Carousel 
-                    className="w-full max-w-2xl lg:max-w-4xl px-4 lg:px-6"
+                    className="w-full max-w-full px-4 lg:px-6"
                     setApi={(api) => {
                         emblaApi.current = api;
                         if (api) {

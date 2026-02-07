@@ -4,19 +4,23 @@ import {
   ButtonGroupSeparator,
 } from "@/components/ui/button-group"
 
-export function FilterBar({ goToDrafts, numSavedPoems, numDraftPoems, showAllPoems , goToGallery}) {
+export function FilterBar({ activeView, onViewChange, goToGallery, numSavedPoems, numDraftPoems }) {
   return (
     <nav className="filter-bar">
       <ButtonGroup>
-        <Button onClick={showAllPoems} variant="outline">
-          All ({numSavedPoems + numDraftPoems})
-        </Button>
-        <ButtonGroupSeparator />
-        <Button variant="outline">
+        <Button 
+          onClick={() => onViewChange('saved')}
+          style={activeView === 'saved' ? { backgroundColor: '#E91E63', color: 'white', borderColor: '#E91E63' } : {}}
+          variant="outline"
+        >
           Saved ({numSavedPoems})
         </Button>
         <ButtonGroupSeparator />
-        <Button onClick={goToDrafts} variant="outline">
+        <Button 
+          onClick={() => onViewChange('drafts')}
+          style={activeView === 'drafts' ? { backgroundColor: '#E91E63', color: 'white', borderColor: '#E91E63' } : {}}
+          variant="outline"
+        >
           Drafts ({numDraftPoems})
         </Button>
         <ButtonGroupSeparator />

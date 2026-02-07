@@ -5,10 +5,6 @@ import {
   ButtonGroupSeparator,
 } from "@/components/ui/button-group"
 
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { Bold, Italic, Underline } from "lucide-react"
-
-
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -63,45 +59,33 @@ export function PoemForm({ onAdd, onUpdate, initialPoem, isEditing = false }) {
         <div className='header-btn'>
           <Button variant="ghost" onClick={() => navigate('/')}>← Tornar</Button>
         </div>
-        <div className='header-actions'>
-          <ButtonGroup>
-            <Button 
-              type="submit" 
-              form="poem-form" 
-              disabled={isSaving}
-            >
-              Save Poem
-            </Button>
-            <ButtonGroupSeparator />
-            <Button 
-              variant="outline"
-              onClick={() => crearPoema('borrador')} 
-              disabled={isSaving}
-            >
-              Save to Drafts
-            </Button>
-            <ButtonGroupSeparator />
-            <Button 
-              variant="outline"
-              onClick={() => navigate('/')}
-            >
-              Cancel
-            </Button>
-          </ButtonGroup>
-        </div>
       </header>
-      <div className="edit-text-area">
-          <ToggleGroup variant="outline" type="multiple">
-              <ToggleGroupItem value="bold" aria-label="Toggle bold">
-                  <Bold />
-              </ToggleGroupItem>
-              <ToggleGroupItem value="italic" aria-label="Toggle italic">
-                  <Italic />
-              </ToggleGroupItem>
-              <ToggleGroupItem value="strikethrough" aria-label="Toggle strikethrough">
-                  <Underline />
-              </ToggleGroupItem>
-          </ToggleGroup>
+
+      <div className='header-actions'>
+        <ButtonGroup>
+          <Button 
+            type="submit" 
+            form="poem-form" 
+            disabled={isSaving}
+          >
+            Save Poem
+          </Button>
+          <ButtonGroupSeparator />
+          <Button 
+            variant="outline"
+            onClick={() => crearPoema('borrador')} 
+            disabled={isSaving}
+          >
+            Save to Drafts
+          </Button>
+          <ButtonGroupSeparator />
+          <Button 
+            variant="outline"
+            onClick={() => navigate('/')}
+          >
+            Cancel
+          </Button>
+        </ButtonGroup>
       </div>
       <div className='poem-form-body'>
         <div className='poem-form-container'>
@@ -115,7 +99,8 @@ export function PoemForm({ onAdd, onUpdate, initialPoem, isEditing = false }) {
               />
             </div>
             <div className='input-text-container'>
-              <textarea className='input'
+              <textarea 
+                className='input'
                 placeholder="Escribe aquí tus versos..." 
                 value={texto}
                 onChange={(e) => setTexto(e.target.value)}

@@ -9,7 +9,6 @@ import { Header } from './components/Header';
 import { FilterBar } from './components/FilterBar';
 import { EmptyState } from './components/EmptyState';
 import { PoemForm } from './components/PoemForm';
-import { DraftsPage } from './components/DraftsPage';
 import { LoginForm } from './components/LoginForm';
 import { PoemEditor } from './components/PoemEditor';
 import { Gallery } from './components/Gallery';
@@ -22,6 +21,7 @@ export default function App() {
   const [poemsLoading, setPoemsLoading] = useState(false);
   const [signInLoading, setSignInLoading] = useState(false);
   const [authError, setAuthError] = useState('');
+  const [activeView, setActiveView] = useState('saved');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -202,20 +202,28 @@ export default function App() {
                 />
 
                 <FilterBar 
-                  goToDrafts={()=> navigate('/drafts')} 
+                  activeView={activeView}
+                  onViewChange={setActiveView}
+                  goToGallery={() => navigate("/gallery")}
                   numSavedPoems={poemasGuardados.length}
                   numDraftPoems={borradores.length}
-                  showAllPoems={""}
-                  goToGallery={() => navigate("/gallery")}
                   />
 
                 <main>
                   {poemsLoading ? (
                     <p>Cargando poemas...</p>
-                  ) : poemasGuardados.length > 0 ? (
-                    <PoemList items={poemasGuardados} onEdit={handleEditPoem} />
+                  ) : activeView === 'saved' ? (
+                    poemasGuardados.length > 0 ? (
+                      <PoemList items={poemasGuardados} onEdit={handleEditPoem} />
+                    ) : (
+                      <EmptyState/>
+                    )
                   ) : (
-                    <EmptyState/>
+                    borradores.length > 0 ? (
+                      <PoemList items={borradores} onEdit={handleEditPoem} />
+                    ) : (
+                      <EmptyState/>
+                    )
                   )}
                 </main>
               </div>
@@ -230,14 +238,6 @@ export default function App() {
             </div>
           }
           
-        />
-        <Route
-          path="/drafts"
-          element={
-            <div className='drafts-page-screen'>
-              <DraftsPage borradores={borradores} onEdit={handleEditPoem} />
-            </div>
-          }
         />
         <Route
           path="/edit/:poemId"
