@@ -5,8 +5,13 @@ import {
   ButtonGroupSeparator,
 } from "@/components/ui/button-group"
 
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import { Bold, Italic, Underline } from "lucide-react"
+
+
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 
 export function PoemForm({ onAdd, onUpdate, initialPoem, isEditing = false }) {
   const [titulo, setTitulo] = useState(initialPoem?.titulo ?? '');
@@ -54,7 +59,7 @@ export function PoemForm({ onAdd, onUpdate, initialPoem, isEditing = false }) {
   return (
     <>
       <header className='poem-form-header'>
-        <h2>Escriu el teu Poema</h2>
+        <h2>Write Your Poem</h2>
         <div className='header-btn'>
           <Button variant="ghost" onClick={() => navigate('/')}>← Tornar</Button>
         </div>
@@ -73,7 +78,7 @@ export function PoemForm({ onAdd, onUpdate, initialPoem, isEditing = false }) {
               onClick={() => crearPoema('borrador')} 
               disabled={isSaving}
             >
-              Drafts
+              Save to Drafts
             </Button>
             <ButtonGroupSeparator />
             <Button 
@@ -85,7 +90,19 @@ export function PoemForm({ onAdd, onUpdate, initialPoem, isEditing = false }) {
           </ButtonGroup>
         </div>
       </header>
-
+      <div className="edit-text-area">
+          <ToggleGroup variant="outline" type="multiple">
+              <ToggleGroupItem value="bold" aria-label="Toggle bold">
+                  <Bold />
+              </ToggleGroupItem>
+              <ToggleGroupItem value="italic" aria-label="Toggle italic">
+                  <Italic />
+              </ToggleGroupItem>
+              <ToggleGroupItem value="strikethrough" aria-label="Toggle strikethrough">
+                  <Underline />
+              </ToggleGroupItem>
+          </ToggleGroup>
+      </div>
       <div className='poem-form-body'>
         <div className='poem-form-container'>
           <form id="poem-form" onSubmit={createNewPoemForm} className="poem-form">

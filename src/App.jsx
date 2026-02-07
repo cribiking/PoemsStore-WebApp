@@ -12,6 +12,7 @@ import { PoemForm } from './components/PoemForm';
 import { DraftsPage } from './components/DraftsPage';
 import { LoginForm } from './components/LoginForm';
 import { PoemEditor } from './components/PoemEditor';
+import { Gallery } from './components/Gallery';
 
 export default function App() {
   //Variable on guardem els poemas de moment
@@ -204,6 +205,8 @@ export default function App() {
                   goToDrafts={()=> navigate('/drafts')} 
                   numSavedPoems={poemasGuardados.length}
                   numDraftPoems={borradores.length}
+                  showAllPoems={""}
+                  goToGallery={() => navigate("/gallery")}
                   />
 
                 <main>
@@ -240,6 +243,12 @@ export default function App() {
           path="/edit/:poemId"
           element={
             <PoemEditor poems={poemas} onUpdate={actualizarPoema} onDelete={eliminarPoema} loading={poemsLoading} user={user} />
+          }
+        />
+        <Route
+          path="gallery"
+          element={
+            <Gallery/>
           }
         />
         

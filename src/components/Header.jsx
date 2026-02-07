@@ -1,28 +1,16 @@
-import { useState } from 'react'
+
 import { Button } from "@/components/ui/button"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import {
-  ButtonGroup,
-  ButtonGroupSeparator,
-} from "@/components/ui/button-group"
+import { ButtonGroup, ButtonGroupSeparator } from "@/components/ui/button-group"
+import { CloseSesion } from './CloseSesion'
+
+
+
 
 export function Header({ count, user, onSignOut, onCreatePoem, onExportPoems }) {
-  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+  
+  //avatar de respaldo, agafa la primera llegra del nom o gmail y la fa majuscula
   const fallbackInitial = (user?.displayName || user?.email || '?').charAt(0).toUpperCase();
 
-  const handleLogout = () => {
-    setShowLogoutDialog(false);
-    onSignOut();
-  };
 
   return (
     <header className="header-container header-fixed">
@@ -56,34 +44,15 @@ export function Header({ count, user, onSignOut, onCreatePoem, onExportPoems }) 
       </div>
 
       <div className="header-user-actions">
-        <button 
-          type="button" 
-          className="header-avatar-btn" 
-          onClick={() => setShowLogoutDialog(true)}
-          title="Cerrar sesión"
-        >
-          {user?.photoURL ? (
-            <img src={user.photoURL} alt={user.displayName || user.email} className="header-avatar-img" />
-          ) : (
-            <span className="header-avatar-fallback">{fallbackInitial}</span>
-          )}
-        </button>
+        <div className='close-sesion-dropdown'>
+        <CloseSesion 
+          urlIcon={user?.photoURL}
+          fallbackInitial={fallbackInitial}
+          CloseSesionAlert={onSignOut}
+           />
+        </div>
       </div>
 
-      <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>¿Cerrar sesión?</AlertDialogTitle>
-            <AlertDialogDescription>
-              ¿Estás seguro de que quieres cerrar sesión? Tus poemas guardados se mantendrán en la nube.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleLogout}>Cerrar sesión</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </header>
   );
 }

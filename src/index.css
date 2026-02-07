@@ -69,7 +69,15 @@ body {
   padding: 0;
   min-height: 100vh;
   background-color: #FFD6E8;
-  background-attachment: fixed;
+  background-attachment: scroll;
+  background-repeat: repeat;
+  background-size: 100% 100vh;
+}
+
+@media (min-width: 1024px) {
+  body {
+    background-attachment: fixed;
+  }
 }
 
 h1 {
@@ -101,12 +109,35 @@ button:focus-visible {
   :root {
     color: #213547;
     background-color: #ffffff;
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+    --primary: oklch(0.205 0 0);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
   }
   a:hover {
     color: #747bff;
   }
   button {
-    background-color: #f9f9f9;
+    background-color: #1a1a1a;
+    color: white;
+  }
+  button:hover {
+    border-color: #646cff;
+    background-color: #2d2d2d;
   }
 }
 
@@ -187,6 +218,14 @@ button:focus-visible {
   padding: 0;
 }
 
+@media (prefers-color-scheme: light) {
+  .header-new-btn {
+    border-color: #ccc;
+    background: #e0e0e0;
+    color: #1a1a1a;
+  }
+}
+
 .header-avatar-btn{
   width: 44px;
   height: 44px;
@@ -200,6 +239,13 @@ button:focus-visible {
   overflow: hidden;
 }
 
+@media (prefers-color-scheme: light) {
+  .header-avatar-btn {
+    border-color: #ccc;
+    background: #f0f0f0;
+  }
+}
+
 .header-avatar-img{
   width: 100%;
   height: 100%;
@@ -209,6 +255,12 @@ button:focus-visible {
 .header-avatar-fallback{
   color: #fff;
   font-weight: 600;
+}
+
+@media (prefers-color-scheme: light) {
+  .header-avatar-fallback {
+    color: #1a1a1a;
+  }
 }
 
 .empty-container {
@@ -240,6 +292,12 @@ button:focus-visible {
   font-size: clamp(0.8em, 1.5vw, 0.95em);
   white-space: nowrap;
   color: white;
+}
+
+@media (prefers-color-scheme: light) {
+  .container-btn button {
+    color: white;
+  }
 }
 
 /*################  ESTIL DE POEM-CARD  ####################*/
@@ -281,6 +339,18 @@ button:focus-visible {
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
+@media (prefers-color-scheme: light) {
+  .poem-card {
+    border-color: #ddd;
+    background: #f9f9f9;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .poem-card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+}
+
 .poem-card-clickable {
   cursor: pointer;
 }
@@ -304,6 +374,12 @@ button:focus-visible {
   color: #fff;
 }
 
+@media (prefers-color-scheme: light) {
+  .poem-card h3 {
+    color: #1a1a1a;
+  }
+}
+
 .poem-card p {
   margin: 0;
   color: #ccc;
@@ -314,10 +390,22 @@ button:focus-visible {
   text-overflow: ellipsis;
 }
 
+@media (prefers-color-scheme: light) {
+  .poem-card p {
+    color: #666;
+  }
+}
+
 .poem-card span {
   font-size: 0.8em;
   color: #999;
   margin-top: 2px;
+}
+
+@media (prefers-color-scheme: light) {
+  .poem-card span {
+    color: #999;
+  }
 }
 
 .poem-card-actions {
@@ -339,9 +427,30 @@ button:focus-visible {
   border-color: #888;
 }
 
+@media (prefers-color-scheme: light) {
+  .poem-card-btn {
+    border-color: #999;
+    background: #f0f0f0;
+    color: #1a1a1a;
+  }
+  
+  .poem-card-btn:hover {
+    border-color: #666;
+    background: #e8e8e8;
+  }
+}
+
 .poem-card-delete {
   border-color: #7a3b3b;
   color: #f0b5b5;
+}
+
+@media (prefers-color-scheme: light) {
+  .poem-card-delete {
+    border-color: #d32f2f;
+    color: #d32f2f;
+    background: #fff3e0;
+  }
 }
 
 .poem-editor-actions {
@@ -391,16 +500,35 @@ button:focus-visible {
   gap: 12px;
 }
 
+@media (prefers-color-scheme: light) {
+  .modal-card {
+    background: #f9f9f9;
+    border-color: #ddd;
+  }
+}
+
 .modal-card h3 {
   margin: 0;
   font-size: 1.2rem;
   color: #fff;
 }
 
+@media (prefers-color-scheme: light) {
+  .modal-card h3 {
+    color: #1a1a1a;
+  }
+}
+
 .modal-card p {
   margin: 0;
   color: #cfcfcf;
   font-size: 0.95rem;
+}
+
+@media (prefers-color-scheme: light) {
+  .modal-card p {
+    color: #666;
+  }
 }
 
 .modal-actions {
@@ -419,14 +547,37 @@ button:focus-visible {
   font-size: 0.9rem;
 }
 
+@media (prefers-color-scheme: light) {
+  .modal-btn {
+    border-color: #999;
+    background: #f0f0f0;
+    color: #1a1a1a;
+  }
+}
+
 .modal-danger {
   border-color: #7a3b3b;
   background: #2a1b1b;
   color: white;
 }
 
+@media (prefers-color-scheme: light) {
+  .modal-danger {
+    border-color: #d32f2f;
+    background: #fff3e0;
+    color: #d32f2f;
+  }
+}
+
 .modal-danger:hover {
   border-color: #a05555;
+}
+
+@media (prefers-color-scheme: light) {
+  .modal-danger:hover {
+    border-color: #c62828;
+    background: #ffe0b2;
+  }
 }
 
 .poem-grid {
@@ -553,6 +704,16 @@ button:focus-visible {
   box-sizing: border-box;
 }
 
+@media (prefers-color-scheme: light) {
+  .poem-form-body input {
+    color: #1a1a1a;
+    border-bottom-color: #999;
+  }
+  .poem-form-body input::placeholder {
+    color: #999;
+  }
+}
+
 /* Estilo para el área de texto (el poema) */
 .poem-form-body textarea {
   width: 100%;
@@ -568,6 +729,17 @@ button:focus-visible {
   line-height: 1.6;
   box-sizing: border-box;
   font-family: inherit;
+}
+
+@media (prefers-color-scheme: light) {
+  .poem-form-body textarea {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-color: #999;
+    color: #1a1a1a;
+  }
+  .poem-form-body textarea::placeholder {
+    color: #999;
+  }
 }
 
 /*################  LOGIN  ####################*/
@@ -595,6 +767,14 @@ button:focus-visible {
   gap: 16px;
 }
 
+@media (prefers-color-scheme: light) {
+  .login-card {
+    background: #f9f9f9;
+    border-color: #ddd;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  }
+}
+
 .login-brand {
   display: flex;
   align-items: center;
@@ -614,15 +794,35 @@ button:focus-visible {
   font-weight: 600;
 }
 
+@media (prefers-color-scheme: light) {
+  .login-mark {
+    background: #f0f0f0;
+    border-color: #ccc;
+    color: #1a1a1a;
+  }
+}
+
 .login-card h1 {
   margin: 0;
   font-size: 1.8rem;
+}
+
+@media (prefers-color-scheme: light) {
+  .login-card h1 {
+    color: #1a1a1a;
+  }
 }
 
 .login-subtitle {
   margin: 0;
   color: #c9c9c9;
   font-size: 0.98rem;
+}
+
+@media (prefers-color-scheme: light) {
+  .login-subtitle {
+    color: #666;
+  }
 }
 
 .login-error {
@@ -633,6 +833,14 @@ button:focus-visible {
   border-radius: 12px;
   padding: 10px 12px;
   font-size: 0.9rem;
+}
+
+@media (prefers-color-scheme: light) {
+  .login-error {
+    color: #d32f2f;
+    background: #ffebee;
+    border-color: #ffcdd2;
+  }
 }
 
 .login-btn {
@@ -646,6 +854,14 @@ button:focus-visible {
   background: #202020;
   color: #fff;
   font-size: 0.95rem;
+}
+
+@media (prefers-color-scheme: light) {
+  .login-btn {
+    border-color: #999;
+    background: #f0f0f0;
+    color: #1a1a1a;
+  }
 }
 
 .login-btn:disabled {
@@ -663,6 +879,13 @@ button:focus-visible {
   place-items: center;
   font-weight: 700;
   font-size: 0.9rem;
+}
+
+@media (prefers-color-scheme: light) {
+  .login-btn-icon {
+    background: #e0e0e0;
+    border-color: #999;
+  }
 }
 
 /*Drafts*/
@@ -691,7 +914,9 @@ button:focus-visible {
 }
 
 .drafts-main {
-  padding-top: 100px;
+  display: flex;
+  align-items: center;
+  padding:100px 10px;
 }
 
 /* Export Menu Styles */
@@ -762,6 +987,14 @@ button:focus-visible {
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
 }
 
+@media (prefers-color-scheme: light) {
+  .export-modal-card {
+    background: #f9f9f9;
+    border-color: #ddd;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  }
+}
+
 .export-menu {
   display: flex;
   flex-direction: column;
@@ -778,6 +1011,12 @@ button:focus-visible {
   padding-bottom: 12px;
 }
 
+@media (prefers-color-scheme: light) {
+  .export-menu-header {
+    border-bottom-color: #ddd;
+  }
+}
+
 .export-menu-header h3 {
   margin: 0;
   font-size: 1.2rem;
@@ -785,6 +1024,12 @@ button:focus-visible {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+@media (prefers-color-scheme: light) {
+  .export-menu-header h3 {
+    color: #1a1a1a;
+  }
 }
 
 .export-close-btn {
@@ -803,9 +1048,22 @@ button:focus-visible {
   transition: all 0.2s ease;
 }
 
+@media (prefers-color-scheme: light) {
+  .export-close-btn {
+    color: #666;
+  }
+}
+
 .export-close-btn:hover {
   background: rgba(255, 255, 255, 0.1);
   color: #fff;
+}
+
+@media (prefers-color-scheme: light) {
+  .export-close-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: #1a1a1a;
+  }
 }
 
 .export-menu-buttons {
@@ -830,10 +1088,26 @@ button:focus-visible {
   transition: all 0.3s ease;
 }
 
+@media (prefers-color-scheme: light) {
+  .export-button {
+    background: #f0f0f0;
+    border-color: #999;
+    color: #1a1a1a;
+  }
+}
+
 .export-button:hover:not(:disabled) {
   background: #333;
   border-color: #667eea;
   transform: translateX(4px);
+}
+
+@media (prefers-color-scheme: light) {
+  .export-button:hover:not(:disabled) {
+    background: #e8e8e8;
+    border-color: #667eea;
+    color: #1a1a1a;
+  }
 }
 
 .export-button:disabled {
@@ -853,6 +1127,12 @@ button:focus-visible {
   background: rgba(102, 126, 234, 0.1);
 }
 
+@media (prefers-color-scheme: light) {
+  .pdf-button:hover:not(:disabled) {
+    background: rgba(102, 126, 234, 0.15);
+  }
+}
+
 .txt-button {
   border-color: #ff9800;
 }
@@ -861,12 +1141,24 @@ button:focus-visible {
   background: rgba(255, 152, 0, 0.1);
 }
 
+@media (prefers-color-scheme: light) {
+  .txt-button:hover:not(:disabled) {
+    background: rgba(255, 152, 0, 0.15);
+  }
+}
+
 .drive-button {
   border-color: #4285f4;
 }
 
 .drive-button:hover:not(:disabled) {
   background: rgba(66, 133, 244, 0.1);
+}
+
+@media (prefers-color-scheme: light) {
+  .drive-button:hover:not(:disabled) {
+    background: rgba(66, 133, 244, 0.15);
+  }
 }
 
 .export-message {
@@ -882,14 +1174,35 @@ button:focus-visible {
   color: #667eea;
 }
 
+@media (prefers-color-scheme: light) {
+  .export-message.loading {
+    background: rgba(102, 126, 234, 0.15);
+    color: #667eea;
+  }
+}
+
 .export-message.success {
   background: rgba(76, 175, 80, 0.2);
   color: #4caf50;
 }
 
+@media (prefers-color-scheme: light) {
+  .export-message.success {
+    background: rgba(76, 175, 80, 0.15);
+    color: #2e7d32;
+  }
+}
+
 .export-message.error {
   background: rgba(211, 47, 47, 0.2);
   color: #d32f2f;
+}
+
+@media (prefers-color-scheme: light) {
+  .export-message.error {
+    background: rgba(211, 47, 47, 0.15);
+    color: #c62828;
+  }
 }
 
 /*---break---*/
@@ -986,3 +1299,4 @@ button:focus-visible {
   }
 
 }
+
