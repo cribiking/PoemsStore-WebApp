@@ -1357,6 +1357,59 @@ button:focus-visible {
   line-height: 1.5;
 }
 
+.year-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+  flex-wrap: wrap;
+}
+
+.year-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.year-select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background-color: white;
+  color: #1a1a1a;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.year-select:hover {
+  border-color: #E91E63;
+  box-shadow: 0 2px 8px rgba(233, 30, 99, 0.15);
+}
+
+.year-select:focus {
+  outline: none;
+  border-color: #E91E63;
+  box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .year-label {
+    color: #ccc;
+  }
+  
+  .year-select {
+    background-color: #1f1f1f;
+    color: #fff;
+    border-color: #333;
+  }
+  
+  .year-select:hover {
+    border-color: #E91E63;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

@@ -7,6 +7,7 @@ import { auth, db, googleProvider } from './firebase';
 import { PoemList } from './components/PoemList';
 import { Header } from './components/Header';
 import { FilterBar } from './components/FilterBar';
+import { YearSelector } from './components/YearSelector';
 import { EmptyState } from './components/EmptyState';
 import { LoginForm } from './components/LoginForm';
 
@@ -24,6 +25,7 @@ export default function App() {
   const [signInLoading, setSignInLoading] = useState(false);
   const [authError, setAuthError] = useState('');
   const [activeView, setActiveView] = useState('saved');
+  const [selectedYear, setSelectedYear] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -123,12 +125,17 @@ export default function App() {
     await deleteDoc(poemRef);
   };
 
-  const handleEditPoem = (poemId) => {
-    navigate(`/edit/${poemId}`);
+  const handleViewChange = (view) => {
+    setActiveView(view);
+    setSelectedYear(null); // Resetear el filtro de año cuando se cambia de vista
   };
 
   const handleCreatePoem = () => {
     navigate('/new');
+  };
+
+  const handleEditPoem = (poemId) => {
+    navigate(`/edit/${poemId}`);
   };
 
   const exportPoemsToTxt = () => {
@@ -166,11 +173,60 @@ export default function App() {
     URL.revokeObjectURL(url);
   };
 
+  // Función para extraer el año de un poema
+  const getYearFromPoem = (poem) => {
+    if (poem.createdAt?.seconds) {
+      return new Date(poem.createdAt.seconds * 1000).getFullYear().toString();
+    }
+    if (poem.fecha) {
+      const dateStr = poem.fecha;
+      const parts = dateStr.split('/');
+      if (parts.length === 3) {
+        // Asumir que el último número es el año
+        const year = parts[2];
+        return year.length === 4 ? year : `20${year}`;
+      }
+    }
+    return new Date().getFullYear().toString();
+  };
+
+  // Función para obtener todos los años únicos con conteo de poemas
+  const getYearsData = (poemsArray) => {
+    const yearsMap = {};
+    poemsArray.forEach((poem) => {
+      const year = getYearFromPoem(poem);
+      yearsMap[year] = (yearsMap[year] || 0) + 1;
+    });
+
+    const years = Object.entries(yearsMap)
+      .sort((a, b) => b[0].localeCompare(a[0]))
+      .map(([year, count]) => ({ year, count }));
+
+    return {
+      years,
+      total: poemsArray.length
+    };
+  };
+
   // Función para obtener solo poemas guardados
   const poemasGuardados = poemas.filter(p => p.estado === 'guardado');
 
   // Función para obtener solo borradores
   const borradores = poemas.filter(p => p.estado === 'borrador');
+
+  // Filtrar por año si está seleccionado
+  const filteredPoemasGuardados = selectedYear
+    ? poemasGuardados.filter(p => getYearFromPoem(p) === selectedYear)
+    : poemasGuardados;
+
+  const filteredBorradores = selectedYear
+    ? borradores.filter(p => getYearFromPoem(p) === selectedYear)
+    : borradores;
+
+  // Obtener datos de años basado en el estado actual
+  const yearsDataGuardados = getYearsData(poemasGuardados);
+  const yearsDataBorradores = getYearsData(borradores);
+  const yearsData = activeView === 'saved' ? yearsDataGuardados : yearsDataBorradores;
 
 
   if (authLoading) {
@@ -196,7 +252,7 @@ export default function App() {
           element={
             <div className="main-container">
               <Header
-                count={poemasGuardados.length + borradores.length}
+                count={filteredPoemasGuardados.length + filteredBorradores.length}
                 user={user}
                 onSignOut={handleSignOut}
                 onCreatePoem={handleCreatePoem}
@@ -207,23 +263,29 @@ export default function App() {
                 <div className='poems-section'>
                   <FilterBar 
                     activeView={activeView}
-                    onViewChange={setActiveView}
+                    onViewChange={handleViewChange}
                     goToGallery={() => navigate("/gallery")}
                     numSavedPoems={poemasGuardados.length}
                     numDraftPoems={borradores.length}
                   />
 
+                  <YearSelector 
+                    selectedYear={selectedYear}
+                    onYearChange={setSelectedYear}
+                    yearsData={yearsData}
+                  />
+
                   {poemsLoading ? (
                     <p>Cargando poemas...</p>
                   ) : activeView === 'saved' ? (
-                    poemasGuardados.length > 0 ? (
-                      <PoemList items={poemasGuardados} onEdit={handleEditPoem} />
+                    filteredPoemasGuardados.length > 0 ? (
+                      <PoemList items={filteredPoemasGuardados} onEdit={handleEditPoem} />
                     ) : (
                       <EmptyState/>
                     )
                   ) : (
-                    borradores.length > 0 ? (
-                      <PoemList items={borradores} onEdit={handleEditPoem} />
+                    filteredBorradores.length > 0 ? (
+                      <PoemList items={filteredBorradores} onEdit={handleEditPoem} />
                     ) : (
                       <EmptyState/>
                     )
@@ -232,8 +294,8 @@ export default function App() {
               </main>
 
               <footer className='footer-container'>
-                <p> Dedicated to Ariadna I. created by Arnau C.</p>
-                <p>My sweet Love</p>
+                <p> Dedicated to Ariadna I. My sweet Love</p>
+                <p>By Arnau.C</p>
               </footer>
             </div>
           }
