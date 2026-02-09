@@ -112,9 +112,11 @@ export default function App() {
   const actualizarPoema = async (poemId, nuevoPoema) => {
     if (!user || !poemId) return;
     const poemRef = doc(db, 'users', user.uid, 'poems', poemId);
+    // Al actualizar: NO cambiar la fecha de creación, solo actualizar contenido y guardar updatedAt
     await updateDoc(poemRef, {
-      ...nuevoPoema,
-      fecha: new Date().toLocaleDateString(),
+      titulo: nuevoPoema.titulo,
+      contenido: nuevoPoema.contenido,
+      estado: nuevoPoema.estado,
       updatedAt: serverTimestamp()
     });
   };
@@ -149,14 +151,24 @@ export default function App() {
     content += '           MIS POEMAS - COLECCIÓN\n';
     content += '═══════════════════════════════════════════\n\n';
     content += `Autor: ${user?.displayName || user?.email || 'Anónimo'}\n`;
-    content += `Fecha de exportación: ${new Date().toLocaleString('es-ES')}\n`;
+    content += `Fecha de exportación: ${new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid' })}\n`;
     content += `Total de poemas: ${poemasGuardados.length}\n\n`;
     content += '═══════════════════════════════════════════\n\n';
 
     poemasGuardados.forEach((poema, index) => {
+      // Obtener la fecha de creación del poema
+      let fechaPoema = 'Sin fecha';
+      if (poema?.updatedAt?.toDate) {
+        fechaPoema = poema.updatedAt.toDate().toLocaleDateString('es-ES', { timeZone: 'Europe/Madrid' });
+      } else if (poema?.createdAt?.toDate) {
+        fechaPoema = poema.createdAt.toDate().toLocaleDateString('es-ES', { timeZone: 'Europe/Madrid' });
+      } else if (poema?.fecha) {
+        fechaPoema = poema.fecha;
+      }
+      
       content += `${index + 1}. ${poema.titulo}\n`;
       content += `${'─'.repeat(poema.titulo.length + 3)}\n`;
-      content += `Fecha: ${poema.fecha || 'Sin fecha'}\n\n`;
+      content += `Fecha: ${fechaPoema}\n\n`;
       content += `${poema.contenido}\n\n`;
       content += '═══════════════════════════════════════════\n\n';
     });
@@ -166,17 +178,17 @@ export default function App() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `mis-poemas-${new Date().toISOString().split('T')[0]}.txt`;
+    link.download = `mis-poemas-${new Date().toLocaleDateString('es-ES', { timeZone: 'Europe/Madrid' }).split(' ')[0]}.txt`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   };
 
-  // Función para extraer el año de un poema
+  // Función para extraer el año de un poema (usando la fecha de creación original)
   const getYearFromPoem = (poem) => {
     if (poem.createdAt?.seconds) {
-      return new Date(poem.createdAt.seconds * 1000).getFullYear().toString();
+      return new Date(poem.createdAt.seconds * 1000).toLocaleDateString('es-ES', { timeZone: 'Europe/Madrid' }).split('/')[2];
     }
     if (poem.fecha) {
       const dateStr = poem.fecha;

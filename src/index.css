@@ -174,10 +174,11 @@ button:focus-visible {
   gap: 12px;
   padding: 12px 24px;
   box-sizing: border-box;
-  background: linear-gradient(135deg, #E91E63 0%, #C2185B 100%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg,#6B4A68  0%, #8B5A7E 100%);
+  border-bottom: none;
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
 }
 
 .header-fixed{
@@ -301,12 +302,12 @@ button:focus-visible {
   height: 100%;
 }
 
+
 .filter-bar {
   display: flex;
   align-items: center;
   justify-content: flex-start;
   width: 100%;
-  padding: 8px 0;
 }
 
 .container-btn {
@@ -335,6 +336,7 @@ button:focus-visible {
   display: flex;
   flex-direction: column;
   gap: 20px;
+
 }
 
 .poem-group {
@@ -729,9 +731,9 @@ button:focus-visible {
 .poem-form-body input {
   width: 100%;
   font-size: 1.3rem;
-  padding: 20px 0;
+  
   margin-bottom: 0;
-  background-color: transparent;
+  
   border: none;
   border-bottom: 1px solid #ddd;
   color: #000;
@@ -759,7 +761,7 @@ button:focus-visible {
 /* Estilo para el área de texto (el poema) */
 .poem-form-body textarea {
   width: 100%;
-  min-height: 250px;
+  min-height: 450px;
   font-size: 1.3rem;
   padding: 30px;
   background-color: white;
@@ -976,20 +978,21 @@ button:focus-visible {
 /* Export Menu Styles */
 .poem-editor-export {
   padding: 8px 16px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
+  background: #fff1e8;
+  color: #333;
+  border: 1px solid #e8d4c4;
   border-radius: 6px;
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .poem-editor-export:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  background: #ffe4cc;
 }
 
 .poem-editor-delete {

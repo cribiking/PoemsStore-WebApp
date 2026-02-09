@@ -34,25 +34,38 @@ export function PoemForm({ onAdd, onUpdate, initialPoem, isEditing = false }) {
   const crearPoema = async (estado) => {
     if (!titulo || !texto || isSaving) return;
 
-    const nuevoPoema = {
-      titulo: titulo,
-      contenido: texto,
-      fecha: new Date().toLocaleDateString(),
-      estado: estado
-    };
-    setIsSaving(true);
-
-    try {
-      if (isEditing) {
-        await onUpdate?.(initialPoem?.id, nuevoPoema);
-      } else {
-        await onAdd?.(nuevoPoema);
+    // Para edición, solo actualizar título, contenido y estado (sin cambiar la fecha de creación)
+    if (isEditing) {
+      const poemActualizado = {
+        titulo: titulo,
+        contenido: texto,
+        estado: estado
+      };
+      setIsSaving(true);
+      try {
+        await onUpdate?.(initialPoem?.id, poemActualizado);
+        navigate('/');
+        setTitulo('');
+        setTexto('');
+      } finally {
+        setIsSaving(false);
       }
-      navigate('/');
-      setTitulo('');
-      setTexto('');
-    } finally {
-      setIsSaving(false);
+    } else {
+      // Para nuevo poema, agregar fecha
+      const nuevoPoema = {
+        titulo: titulo,
+        contenido: texto,
+        estado: estado
+      };
+      setIsSaving(true);
+      try {
+        await onAdd?.(nuevoPoema);
+        navigate('/');
+        setTitulo('');
+        setTexto('');
+      } finally {
+        setIsSaving(false);
+      }
     }
   };
 

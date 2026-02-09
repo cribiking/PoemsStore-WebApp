@@ -30,21 +30,31 @@ const parseDateString = (value) => {
 };
 
 const getPoemDate = (poem) => {
-  if (poem?.updatedAt?.toDate) return poem.updatedAt.toDate();
+  // Preferir createdAt (fecha de creación) para mantener la fecha original visible
   if (poem?.createdAt?.toDate) return poem.createdAt.toDate();
+  if (poem?.updatedAt?.toDate) return poem.updatedAt.toDate();
   return parseDateString(poem?.fecha);
 };
 
 const getDateKey = (poem) => {
   const date = getPoemDate(poem);
-  if (date) return date.toISOString().split("T")[0];
+  if (date) {
+    // Convertir a fecha con zona horaria de Madrid para agrupar correctamente
+    const dateString = date.toLocaleDateString("es-ES", { timeZone: "Europe/Madrid" });
+    // Convertir "d/m/yyyy" a "yyyy-mm-dd" para formato ISO
+    const parts = dateString.split('/');
+    if (parts.length === 3) {
+      const [day, month, year] = parts;
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
+  }
   if (typeof poem?.fecha === "string" && poem.fecha.trim()) return `raw:${poem.fecha}`;
   return "Sin fecha";
 };
 
 const getDateLabel = (poem) => {
   const date = getPoemDate(poem);
-  if (date) return date.toLocaleDateString("es-ES");
+  if (date) return date.toLocaleDateString("es-ES", { timeZone: "Europe/Madrid" });
   if (typeof poem?.fecha === "string" && poem.fecha.trim()) return poem.fecha;
   return "Sin fecha";
 };
