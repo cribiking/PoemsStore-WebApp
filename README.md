@@ -26,8 +26,8 @@
 
 | Home Page | Escritura |
 | :---: | :---: |
-| ![Dashboard](./screenshots/dashboard.png) | ![Editor](./screenshots/editor.png) |
-*(Nota: Asegúrate de añadir capturas de pantalla reales en una carpeta llamada screenshots)*
+| ![Dashboard](./screenshots/dashboard.png) | ![LogIn](./screenshots/login.png) |
+
 
 ## 📦 Instalación y Configuración
 
