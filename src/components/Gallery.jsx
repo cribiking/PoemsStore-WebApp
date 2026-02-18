@@ -20,8 +20,9 @@ export function Gallery(){
     const navigate = useNavigate();
     const [_ , setIndex] = useState(0);
     const emblaApi = useRef(null);
+    const fileInputRef = useRef(null);
 
-    const images = [
+    const [images, setImages] = useState([
         { src: '/ariAndMe.webp', alt: 'Ari and Me' },
         { src: '/paoAndMe.jpg', alt: 'Pao and Me' },
         { src: '/ariVAndMe.jpg', alt: 'Ari V and Me' },
@@ -51,7 +52,26 @@ export function Gallery(){
         { src: '/portAventuraPajaro.webp', alt: 'PortAventura Pájaro' },
         { src: '/thor.webp', alt: 'Thor' },
         { src: '/vaixell.webp', alt: 'Vaixell' },
-    ];
+    ]);
+
+    const handleAddPhoto = (event) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const newImage = {
+                    src: e.target?.result,
+                    alt: file.name.replace(/\.[^/.]+$/, '')
+                };
+                setImages([...images, newImage]);
+            };
+            reader.readAsDataURL(file);
+            // Limpiar el input
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
+        }
+    };
 
 
     return(
@@ -62,7 +82,22 @@ export function Gallery(){
         </header>
 
         <div className="img-display-container flex flex-col items-center justify-center">
-            <div className="flex items-center justify-center w-full pt-5 pb-4">
+            <div className="flex gap-4 items-center justify-center w-full pt-5 pb-4">
+                <input 
+                    type="file" 
+                    accept="image/*"
+                    ref={fileInputRef}
+                    onChange={handleAddPhoto}
+                    style={{ display: 'none' }}
+                />
+                <Button 
+                    onClick={() => fileInputRef.current?.click()}
+                    className="rounded px-4 py-2"
+                >
+                    + Añadir foto
+                </Button>
+            </div>
+            <div className="flex items-center justify-center w-full pb-4">
                 <Carousel 
                     className="w-full max-w-full px-4 lg:px-6"
                     setApi={(api) => {
