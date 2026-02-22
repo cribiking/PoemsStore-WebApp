@@ -9,36 +9,21 @@ import {
   persistentMultipleTabManager
 } from "firebase/firestore"; // Para Firestore
 
-// Firebase configuration using environment variables
+// Firebase configuration using env vars with fixed fallback values
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyBGsXLFKXOGXw9cT9B1bUOqrJ7n2NrZpu0",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "ari-poems-v3.firebaseapp.com",
+  databaseURL:
+    import.meta.env.VITE_FIREBASE_DATABASE_URL ||
+    "https://ari-poems-v3-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "ari-poems-v3",
+  storageBucket:
+    import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "ari-poems-v3.firebasestorage.app",
+  messagingSenderId:
+    import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "418690114937",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:418690114937:web:a5ddfe55149ad381b53ba8",
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-PRF09L2K8Q"
 };
-
-const requiredFirebaseEnvVars = [
-  "VITE_FIREBASE_API_KEY",
-  "VITE_FIREBASE_AUTH_DOMAIN",
-  "VITE_FIREBASE_PROJECT_ID",
-  "VITE_FIREBASE_APP_ID",
-  "VITE_FIREBASE_MESSAGING_SENDER_ID",
-  "VITE_FIREBASE_STORAGE_BUCKET"
-];
-
-const missingFirebaseEnvVars = requiredFirebaseEnvVars.filter(
-  (envVar) => !import.meta.env[envVar]
-);
-
-if (missingFirebaseEnvVars.length > 0) {
-  throw new Error(
-    `Firebase config is incomplete. Missing env vars: ${missingFirebaseEnvVars.join(", ")}`
-  );
-}
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
