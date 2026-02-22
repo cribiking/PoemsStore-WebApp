@@ -17,6 +17,25 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
+const requiredFirebaseEnvVars = [
+  "VITE_FIREBASE_API_KEY",
+  "VITE_FIREBASE_AUTH_DOMAIN",
+  "VITE_FIREBASE_PROJECT_ID",
+  "VITE_FIREBASE_APP_ID",
+  "VITE_FIREBASE_MESSAGING_SENDER_ID",
+  "VITE_FIREBASE_STORAGE_BUCKET"
+];
+
+const missingFirebaseEnvVars = requiredFirebaseEnvVars.filter(
+  (envVar) => !import.meta.env[envVar]
+);
+
+if (missingFirebaseEnvVars.length > 0) {
+  throw new Error(
+    `Firebase config is incomplete. Missing env vars: ${missingFirebaseEnvVars.join(", ")}`
+  );
+}
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 //const analytics = getAnalytics(app);
