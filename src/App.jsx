@@ -10,6 +10,7 @@ import { FilterBar } from './components/FilterBar';
 import { YearSelector } from './components/YearSelector';
 import { EmptyState } from './components/EmptyState';
 import { LoginForm } from './components/LoginForm';
+import { htmlToPlainText } from './utils/poemContent';
 
 // Lazy load components that aren't needed immediately
 const PoemForm = lazy(() => import('./components/PoemForm').then(m => ({ default: m.PoemForm })));
@@ -147,13 +148,12 @@ export default function App() {
     }
 
     // Formatear poemas en texto
-    let content = '═══════════════════════════════════════════\n';
-    content += '           MIS POEMAS - COLECCIÓN\n';
-    content += '═══════════════════════════════════════════\n\n';
-    content += `Autor: ${user?.displayName || user?.email || 'Anónimo'}\n`;
-    content += `Fecha de exportación: ${new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid' })}\n`;
-    content += `Total de poemas: ${poemasGuardados.length}\n\n`;
-    content += '═══════════════════════════════════════════\n\n';
+    let content = 'MIS POEMAS - COLECCIÓN\r\n';
+    content += '====================================\r\n\r\n';
+    content += `Autor: ${user?.displayName || user?.email || 'Anónimo'}\r\n`;
+    content += `Fecha de exportación: ${new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid' })}\r\n`;
+    content += `Total de poemas: ${poemasGuardados.length}\r\n\r\n`;
+    content += '====================================\r\n\r\n';
 
     poemasGuardados.forEach((poema, index) => {
       // Obtener la fecha de creación del poema
@@ -166,15 +166,15 @@ export default function App() {
         fechaPoema = poema.fecha;
       }
       
-      content += `${index + 1}. ${poema.titulo}\n`;
-      content += `${'─'.repeat(poema.titulo.length + 3)}\n`;
-      content += `Fecha: ${fechaPoema}\n\n`;
-      content += `${poema.contenido}\n\n`;
-      content += '═══════════════════════════════════════════\n\n';
+      content += `${index + 1}. ${poema.titulo}\r\n`;
+      content += `${'-'.repeat(poema.titulo.length + 3)}\r\n`;
+      content += `Fecha: ${fechaPoema}\r\n\r\n`;
+      content += `${htmlToPlainText(poema.contenido)}\r\n\r\n`;
+      content += '====================================\r\n\r\n';
     });
 
     // Crear y descargar archivo
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const blob = new Blob(['\uFEFF', content], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;

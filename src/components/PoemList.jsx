@@ -1,4 +1,5 @@
 import { PoemCard } from "./PoemCard";
+import { htmlToPlainText } from "../utils/poemContent";
 
 const parseDateString = (value) => {
   if (typeof value !== "string") return null;
@@ -92,7 +93,7 @@ export function PoemList({ items, onEdit }) {
                 key={p.id}
                 id={p.id}
                 title={p.titulo}
-                excerpt={p.contenido}
+                excerpt={htmlToPlainText(p.contenido)}
                 date={getDateLabel(p)}
                 onEdit={onEdit}
               />

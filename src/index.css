@@ -515,8 +515,8 @@ button:focus-visible {
   justify-content: center;
   z-index: 50;
   padding: 16px;
-  backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
 }
 
 .modal-card {
@@ -758,40 +758,58 @@ button:focus-visible {
   }
 }
 
-/* Estilo para el área de texto (el poema) */
-.poem-form-body textarea {
+/* Estilo para el editor del poema */
+.poem-form-body .poem-quill {
   width: 100%;
-  min-height: 450px;
-  font-size: 1.3rem;
-  padding: 30px;
-  background-color: white;
+}
+
+.poem-form-body .poem-quill .ql-toolbar.ql-snow {
   border: none;
-  border-radius: 8px;
-  color: #000;
-  outline: none;
-  resize: vertical;
-  line-height: 1.8;
-  box-sizing: border-box;
-  font-family: inherit;
+  border-radius: 8px 8px 0 0;
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+}
+
+.poem-form-body .poem-quill .ql-container.ql-snow {
+  border: none;
+  border-radius: 0 0 8px 8px;
+  background-color: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: box-shadow 0.3s ease;
 }
 
-.poem-form-body textarea:focus {
+.poem-form-body .poem-quill .ql-editor {
+  width: 100%;
+  min-height: 450px;
+  font-size: 1.3rem;
+  padding: 30px;
+  color: #000;
+  outline: none;
+  line-height: 1.8;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.poem-form-body .poem-quill .ql-container.ql-snow:focus-within {
   box-shadow: 0 4px 16px rgba(233, 30, 99, 0.12);
 }
 
-.poem-form-body textarea::placeholder {
+.poem-form-body .poem-quill .ql-editor.ql-blank::before {
   color: #ccc;
   font-style: italic;
+  left: 30px;
+  right: 30px;
 }
 
 @media (prefers-color-scheme: light) {
-  .poem-form-body textarea {
+  .poem-form-body .poem-quill .ql-toolbar.ql-snow,
+  .poem-form-body .poem-quill .ql-container.ql-snow,
+  .poem-form-body .poem-quill .ql-editor {
     background-color: white;
     color: #000;
   }
-  .poem-form-body textarea::placeholder {
+
+  .poem-form-body .poem-quill .ql-editor.ql-blank::before {
     color: #bbb;
   }
 }

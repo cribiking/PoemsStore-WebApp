@@ -5,34 +5,133 @@ import {
   ButtonGroupSeparator,
 } from "@/components/ui/button-group"
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import 'quill/dist/quill.snow.css';
+import { isEditorContentEmpty, toEditorHtml } from '../utils/poemContent';
+
+const quillModules = {
+  toolbar: [
+    [{ header: [1, 2, 3, false] }],
+    ['bold', 'italic', 'underline', 'blockquote'],
+    [{ list: 'ordered' }, { list: 'bullet' }],
+    ['clean']
+  ]
+};
+
+const quillFormats = [
+  'header',
+  'bold',
+  'italic',
+  'underline',
+  'blockquote',
+  'list'
+];
 
 
 export function PoemForm({ onAdd, onUpdate, initialPoem, isEditing = false }) {
   const [titulo, setTitulo] = useState(initialPoem?.titulo ?? '');
-  const [texto, setTexto] = useState(initialPoem?.contenido ?? '');
+  const [texto, setTexto] = useState(toEditorHtml(initialPoem?.contenido ?? ''));
   const [isSaving, setIsSaving] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmAction, setConfirmAction] = useState(null); // 'cancel' o 'delete'
+  const [quillFailed, setQuillFailed] = useState(false);
+  const quillContainerRef = useRef(null);
+  const quillInstanceRef = useRef(null);
+  const isSyncingRef = useRef(false);
+  const initialContentRef = useRef(toEditorHtml(initialPoem?.contenido ?? ''));
   const navigate = useNavigate();
+
+  useEffect(() => {
+    let disposed = false;
+    let quill = null;
+    let handleTextChange = null;
+
+    const mountQuill = async () => {
+      try {
+        const { default: Quill } = await import('quill');
+        if (disposed || !quillContainerRef.current) return;
+
+        quill = new Quill(quillContainerRef.current, {
+          theme: 'snow',
+          modules: quillModules,
+          formats: quillFormats,
+          placeholder: 'Let your mind be free...'
+        });
+
+        quillInstanceRef.current = quill;
+        quill.root.innerHTML = initialContentRef.current;
+
+        handleTextChange = () => {
+          if (isSyncingRef.current) return;
+          setTexto(quill.root.innerHTML);
+        };
+
+        quill.on('text-change', handleTextChange);
+        setQuillFailed(false);
+      } catch {
+        setQuillFailed(true);
+      }
+    };
+
+    mountQuill();
+
+    return () => {
+      disposed = true;
+      if (quill && handleTextChange) {
+        quill.off('text-change', handleTextChange);
+      }
+      quillInstanceRef.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    const quill = quillInstanceRef.current;
+    if (!quill) return;
+
+    const currentHtml = quill.root.innerHTML;
+    const targetHtml = texto || '<p><br></p>';
+    if (currentHtml === targetHtml) return;
+
+    isSyncingRef.current = true;
+    quill.root.innerHTML = targetHtml;
+    isSyncingRef.current = false;
+  }, [texto]);
+
+  const handleFallbackChange = (e) => {
+    const plainText = e.target.value;
+    if (!plainText.trim()) {
+      setTexto('');
+      return;
+    }
+
+    const escaped = plainText
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;')
+      .replace(/\n/g, '<br/>');
+
+    setTexto(`<p>${escaped}</p>`);
+  };
 
   const hasChanges = () => {
     if (isEditing) {
       return titulo !== (initialPoem?.titulo ?? '') || 
-             texto !== (initialPoem?.contenido ?? '');
+             texto !== toEditorHtml(initialPoem?.contenido ?? '');
     }
-    return titulo.trim() !== '' || texto.trim() !== '';
+    return titulo.trim() !== '' || !isEditorContentEmpty(texto);
   };
 
   useEffect(() => {
     if (!initialPoem) return;
     setTitulo(initialPoem.titulo ?? '');
-    setTexto(initialPoem.contenido ?? '');
+    setTexto(toEditorHtml(initialPoem.contenido ?? ''));
   }, [initialPoem]);
 
   const crearPoema = async (estado) => {
-    if (!titulo || !texto || isSaving) return;
+    if (!titulo.trim() || isEditorContentEmpty(texto) || isSaving) return;
 
     // Para edición, solo actualizar título, contenido y estado (sin cambiar la fecha de creación)
     if (isEditing) {
@@ -137,12 +236,18 @@ export function PoemForm({ onAdd, onUpdate, initialPoem, isEditing = false }) {
               />
             </div>
             <div className='input-text-container'>
-              <textarea 
-                className='input'
-                placeholder="Let your mind be free..." 
-                value={texto}
-                onChange={(e) => setTexto(e.target.value)}
-              />
+              {quillFailed ? (
+                <textarea
+                  className='input'
+                  placeholder="Let your mind be free..."
+                  value={texto.replace(/<br\s*\/?>/g, '\n').replace(/<[^>]+>/g, '')}
+                  onChange={handleFallbackChange}
+                />
+              ) : (
+                <div className="poem-quill">
+                  <div ref={quillContainerRef} />
+                </div>
+              )}
             </div>
           </form>
         </div>
