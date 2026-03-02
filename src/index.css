@@ -414,8 +414,8 @@ button:focus-visible {
 .poem-card p {
   margin: 0;
   color: #ccc;
-  font-size: 0.9em;
-  line-height: 1.35;
+  font-size: 0.82em;
+  line-height: 1.3;
   max-height: 52px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -611,6 +611,31 @@ button:focus-visible {
   }
 }
 
+.modal-success {
+  border-color: #2e7d32;
+  background: #1b5e20;
+  color: white;
+}
+
+@media (prefers-color-scheme: light) {
+  .modal-success {
+    border-color: #2e7d32;
+    background: #e8f5e9;
+    color: #1b5e20;
+  }
+}
+
+.modal-success:hover {
+  border-color: #43a047;
+}
+
+@media (prefers-color-scheme: light) {
+  .modal-success:hover {
+    border-color: #2e7d32;
+    background: #c8e6c9;
+  }
+}
+
 .poem-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -728,6 +753,11 @@ button:focus-visible {
   background-color: white;
 }
 
+.poem-form-body textarea.input {
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
 .poem-form-body input {
   width: 100%;
   font-size: 1.3rem;
@@ -746,6 +776,15 @@ button:focus-visible {
 
 .poem-form-body input:focus {
   border-bottom-color: #E91E63;
+}
+
+.poem-form-body input.input-title-error,
+.poem-form-body input.input-title-error:focus {
+  border-bottom-color: #d32f2f;
+}
+
+.poem-form-body input.input-title-error::placeholder {
+  color: #d32f2f;
 }
 
 @media (prefers-color-scheme: light) {
@@ -781,11 +820,11 @@ button:focus-visible {
 .poem-form-body .poem-quill .ql-editor {
   width: 100%;
   min-height: 450px;
-  font-size: 1.3rem;
+  font-size: 1.05rem;
   padding: 30px;
   color: #000;
   outline: none;
-  line-height: 1.8;
+  line-height: 1.5;
   box-sizing: border-box;
   font-family: inherit;
 }

@@ -32,6 +32,7 @@ const quillFormats = [
 export function PoemForm({ onAdd, onUpdate, initialPoem, isEditing = false }) {
   const [titulo, setTitulo] = useState(initialPoem?.titulo ?? '');
   const [texto, setTexto] = useState(toEditorHtml(initialPoem?.contenido ?? ''));
+  const [titleRequiredError, setTitleRequiredError] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmAction, setConfirmAction] = useState(null); // 'cancel' o 'delete'
@@ -128,10 +129,17 @@ export function PoemForm({ onAdd, onUpdate, initialPoem, isEditing = false }) {
     if (!initialPoem) return;
     setTitulo(initialPoem.titulo ?? '');
     setTexto(toEditorHtml(initialPoem.contenido ?? ''));
+    setTitleRequiredError(false);
   }, [initialPoem]);
 
   const crearPoema = async (estado) => {
-    if (!titulo.trim() || isEditorContentEmpty(texto) || isSaving) return;
+    const missingTitle = !titulo.trim();
+    if (missingTitle) {
+      setTitleRequiredError(true);
+      return;
+    }
+    if (isEditorContentEmpty(texto) || isSaving) return;
+    setTitleRequiredError(false);
 
     // Para edición, solo actualizar título, contenido y estado (sin cambiar la fecha de creación)
     if (isEditing) {
@@ -177,10 +185,15 @@ export function PoemForm({ onAdd, onUpdate, initialPoem, isEditing = false }) {
     }
   };
 
-  const handleConfirmCancel = () => {
+  const handleConfirmSaveDraft = () => {
     if (confirmAction === 'cancel') {
-      // Auto-guardar a Drafts
       crearPoema('borrador');
+    }
+  };
+
+  const handleConfirmSaveChanges = () => {
+    if (confirmAction === 'cancel') {
+      crearPoema('guardado');
     }
   };
 
@@ -232,7 +245,15 @@ export function PoemForm({ onAdd, onUpdate, initialPoem, isEditing = false }) {
                 type="text" 
                 placeholder="Write a title..." 
                 value={titulo}
-                onChange={(e) => setTitulo(e.target.value)}
+                className={titleRequiredError ? 'input-title-error' : ''}
+                aria-invalid={titleRequiredError}
+                onChange={(e) => {
+                  const nextTitle = e.target.value;
+                  setTitulo(nextTitle);
+                  if (titleRequiredError && nextTitle.trim()) {
+                    setTitleRequiredError(false);
+                  }
+                }}
               />
             </div>
             <div className='input-text-container'>
@@ -256,24 +277,25 @@ export function PoemForm({ onAdd, onUpdate, initialPoem, isEditing = false }) {
       {showConfirm ? (
         <div className="modal-overlay" role="dialog" aria-modal="true">
           <div className="modal-card">
-            <h3>{confirmAction === 'cancel' ? 'Unsaved changes' : 'Delete poem'}</h3>
-            <p>
-              {confirmAction === 'cancel' 
-                ? 'Do you want to save the changes to Drafts before leaving?' 
-                : 'This poem will be deleted. Are you sure?'}
-            </p>
+            <h3>Unsaved changes</h3>
+            <p>Choose what you want to do with your changes.</p>
             <div className="modal-actions">
               <button type="button" className="modal-btn" onClick={() => {
                 setShowConfirm(false);
-                navigate('/');
               }}>
-                {confirmAction === 'cancel' ? "Don't save" : 'Cancel'}
+                Cancel
               </button>
-              <button type="button" className="modal-btn modal-danger" onClick={() => {
+              <button type="button" className="modal-btn" onClick={() => {
                 setShowConfirm(false);
-                handleConfirmCancel();
+                handleConfirmSaveDraft();
               }}>
-                {confirmAction === 'cancel' ? 'Save to Drafts' : 'Delete'}
+                Save to Drafts
+              </button>
+              <button type="button" className="modal-btn modal-success" onClick={() => {
+                setShowConfirm(false);
+                handleConfirmSaveChanges();
+              }}>
+                Save Changes
               </button>
             </div>
           </div>
